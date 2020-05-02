@@ -1,1 +1,40 @@
-nya--n
+<!doctype html>
+<!-- https://dexie.org/docs/Tutorial/Getting-started -->
+<html>
+  <head>
+      <!-- Include Dexie -->
+      <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+
+      <script>
+          //
+          // Define your database
+          //
+          var db = new Dexie("test");
+          db.version(1).stores({
+              cities: 'name,population'
+          });
+
+          //
+          // Put some data into it
+          //
+          db.cities.put({name: "Tokyo", population: 100000}).then (function(){
+              //
+              // Then when data is stored, read from it
+              //
+              return db.friends.get('Tokyo');
+          }).then(function (city) {
+              //
+              // Display the result
+              //
+              alert ("Tokyo has " + city.population + " people.");
+          }).catch(function(error) {
+             //
+             // Finally don't forget to catch any error
+             // that could have happened anywhere in the
+             // code blocks above.
+             //
+             alert ("Ooops: " + error);
+          });
+      </script>
+  </head>
+</html>
