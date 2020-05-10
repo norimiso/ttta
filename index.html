@@ -2,39 +2,75 @@
 <!-- https://dexie.org/docs/Tutorial/Getting-started -->
 <html>
   <head>
-      <!-- Include Dexie -->
-      <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+        <!-- Include Dexie -->
+        <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
 
-      <script>
-          //
-          // Define your database
-          //
-          var db = new Dexie("test");
-          db.version(1).stores({
-              cities: 'name,population'
-          });
+        <script>
+            //
+            // Define your database
+            //
+            var db = new Dexie("test");
+            db.version(1).stores({
+                cities: 'name,population'
+            });
+  
+            //
+            // Put some data into it
+            //
+            db.cities.put({name: "Tokyo", population: 100000}).then (function(){
+                //
+                // Then when data is stored, read from it
+                //
+                return db.cities.get('Tokyo');
+            }).then(function (city) {
+                //
+                // Display the result
+                //
+                // alert ("Tokyo has " + city.population + " people.");
+            }).catch(function(error) {
+               //
+               // Finally don't forget to catch any error
+               // that could have happened anywhere in the
+               // code blocks above.
+               //
+            //    alert ("Ooops: " + error);
+            });
+  
+        </script>
 
-          //
-          // Put some data into it
-          //
-          db.cities.put({name: "Tokyo", population: 100000}).then (function(){
-              //
-              // Then when data is stored, read from it
-              //
-              return db.cities.get('Tokyo');
-          }).then(function (city) {
-              //
-              // Display the result
-              //
-              alert ("Tokyo has " + city.population + " people.");
-          }).catch(function(error) {
-             //
-             // Finally don't forget to catch any error
-             // that could have happened anywhere in the
-             // code blocks above.
-             //
-             alert ("Ooops: " + error);
-          });
-      </script>
-  </head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+        <script>
+            // thanks to https://stackoverflow.com/questions/48464043/creating-nested-lists-using-jquery
+
+            $(function() {
+                $.getJSON("etc/cities.json" , function(data) {
+                var ulObj = $('<ul></ul>');
+
+                var len = Object.keys(data[0]).length;
+                console.dir(data);
+
+                for(var i = 1; i <= len; i++) {
+                    var pref_id = ("0" + i).slice(-2);
+
+                    var pref_data = data[0][pref_id];
+                    var cities_length = Object.keys(pref_data["city"]).length;
+
+                    var liObj = $("<li />").attr({"id":"p" + pref_data.id});
+                    liObj.append(pref_data.name);
+
+                    var subul = $("<ul/>");
+                    for(var j = 0; j < cities_length; j++){
+                        var subli = $("<li/>").attr({"id": "c" + pref_data["city"][j].citycode}).text(pref_data["city"][j].city).appendTo(subul);
+                    }
+
+                    liObj.append(subul).appendTo(ulObj);
+                }
+                ulObj.appendTo("#city_list");
+              });
+            });
+            </script>
+    </head>
+    <body>
+        <div id="city_list"></div>
+    </body>
 </html>
